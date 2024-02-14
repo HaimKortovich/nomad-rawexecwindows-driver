@@ -47,7 +47,7 @@ jobs:
         with:
           version: ${{ needs.get-product-version.outputs.product-version }}
           product: ${{ env.PKG_NAME }}
-          repositoryOwner: "hashicorp"
+          repositoryOwner: "HaimKortovich"
       - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         if: ${{ !env.ACT }}
         with:
@@ -62,41 +62,7 @@ jobs:
     strategy:
       matrix:
         goos: ["linux"]
-        goarch: ["386", "arm", "arm64", "amd64"]
-      fail-fast: true
-
-    name: Go ${{ needs.get-go-version.outputs.go-version }} ${{ matrix.goos }} ${{ matrix.goarch }} build
-
-    steps:
-      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
-      - name: Setup go
-        uses: actions/setup-go@4d34df0c2316fe8122ab82dc22947d607c0c91f9 # v4.0.0
-        with:
-          go-version: ${{ needs.get-go-version.outputs.go-version }}
-      - name: Build
-        env:
-          GOOS: ${{ matrix.goos }}
-          GOARCH: ${{ matrix.goarch }}
-        run: |
-          make pkg/${{ matrix.goos }}_${{ matrix.goarch }}.zip
-          mv \
-            pkg/${{ matrix.goos }}_${{ matrix.goarch }}.zip \
-            ${{ env.PKG_NAME }}_${{ needs.get-product-version.outputs.product-version }}_${{ matrix.goos }}_${{ matrix.goarch }}.zip
-      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
-        if: ${{ !env.ACT }}
-        with:
-          name: ${{ env.PKG_NAME }}_${{ needs.get-product-version.outputs.product-version }}_${{ matrix.goos }}_${{ matrix.goarch }}.zip
-          path: ${{ env.PKG_NAME }}_${{ needs.get-product-version.outputs.product-version }}_${{ matrix.goos }}_${{ matrix.goarch }}.zip
-
-  build-darwin:
-    needs:
-      - get-go-version
-      - get-product-version
-    runs-on: macos-11
-    strategy:
-      matrix:
-        goos: ["darwin"]
-        goarch: ["amd64", "arm64"]
+        goarch: ["arm64", "amd64"]
       fail-fast: true
 
     name: Go ${{ needs.get-go-version.outputs.go-version }} ${{ matrix.goos }} ${{ matrix.goarch }} build
@@ -126,11 +92,11 @@ jobs:
     needs:
       - get-go-version
       - get-product-version
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     strategy:
       matrix:
         goos: ["windows"]
-        goarch: ["386", "amd64"]
+        goarch: ["amd64"]
       fail-fast: true
 
     name: Go ${{ needs.get-go-version.outputs.go-version }} ${{ matrix.goos }} ${{ matrix.goarch }} build

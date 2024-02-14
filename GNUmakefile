@@ -1,6 +1,6 @@
 SHELL = bash
 default: help
-
+export GO111MODULE=on
 GIT_COMMIT := $(shell git rev-parse --short HEAD)
 GIT_DIRTY := $(if $(shell git status --porcelain),+CHANGES)
 
