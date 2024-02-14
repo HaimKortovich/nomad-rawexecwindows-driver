@@ -7,10 +7,10 @@ package executor
 
 import (
 	"fmt"
+	"github.com/mitchellh/go-ps"
+	"golang.org/x/sys/windows"
 	"os"
 	"syscall"
-
-	"golang.org/x/sys/windows"
 )
 
 // configure new process group for child process
@@ -53,6 +53,21 @@ func (e *UniversalExecutor) shutdownProcess(s os.Signal, proc *os.Process) error
 		s = os.Kill
 	}
 	if s.String() == os.Interrupt.String() {
+		processes, err := ps.Processes()
+		if err != nil {
+			return err
+		}
+		for _, process := range processes {
+			if process.PPid() == proc.Pid {
+				process, err := os.FindProcess(process.Pid())
+				if err != nil {
+					return fmt.Errorf("error finding process: %v", err)
+				}
+				if err = process.Signal(syscall.SIGKILL); err != nil {
+					return err
+				}
+			}
+		}
 		if err := proc.Signal(syscall.SIGKILL); err != nil {
 			return err
 		}
