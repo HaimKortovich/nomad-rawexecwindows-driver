@@ -48,7 +48,7 @@ func (e *UniversalExecutor) killProcessTree(proc *os.Process) error {
 
 // Send the process a Ctrl-Break event, allowing it to shutdown by itself
 // before being Terminate.
-func shutdownProcess(s os.Signal, proc *os.Process) error {
+func (e *UniversalExecutor) shutdownProcess(s os.Signal, proc *os.Process) error {
 	if s == nil {
 		s = os.Kill
 	}

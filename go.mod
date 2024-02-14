@@ -1,7 +1,13 @@
-// TODO: update the module path below to match your own repository
 module github.com/HaimKortovich/nomad-rawexecwindows-driver
 
 go 1.21
+
+replace (
+	github.com/Microsoft/go-winio => github.com/endocrimes/go-winio v0.4.13-0.20190628114223-fb47a8b41948
+	github.com/armon/go-metrics => github.com/armon/go-metrics v0.0.0-20230509193637-d9ca9af9f1f9
+	github.com/hashicorp/consul/api => github.com/hashicorp/consul/api v1.10.1-0.20230925152502-e5f5fc9301c7
+	github.com/hashicorp/hcl => github.com/hashicorp/hcl v1.0.1-0.20201016140508-a07e7d50bbee
+)
 
 require (
 	github.com/LK4D4/joincontext v0.0.0-20171026170139-1724345da6d5
