@@ -1,15 +1,9 @@
-// Copyright (c) HashiCorp, Inc.
-// SPDX-License-Identifier: MPL-2.0
-
-package hello
+package rawexecwindows
 
 import (
 	"sync"
 )
 
-// taskStore provides a mechanism to store and retrieve
-// task handles given a string identifier. The ID should
-// be unique per task
 type taskStore struct {
 	store map[string]*taskHandle
 	lock  sync.RWMutex
