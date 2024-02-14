@@ -6,9 +6,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/HaimKortovich/nomad-rawexecwindows-driver/executor"
 	hclog "github.com/hashicorp/go-hclog"
 	plugin "github.com/hashicorp/go-plugin"
-	"github.com/hashicorp/nomad/drivers/shared/executor"
 	"github.com/hashicorp/nomad/plugins/drivers"
 )
 
