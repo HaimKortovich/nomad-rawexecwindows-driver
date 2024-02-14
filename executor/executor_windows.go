@@ -63,13 +63,13 @@ func (e *UniversalExecutor) shutdownProcess(s os.Signal, proc *os.Process) error
 				if err != nil {
 					return fmt.Errorf("error finding process: %v", err)
 				}
-				if err = process.Signal(syscall.SIGKILL); err != nil {
-					return err
+				if err := sendCtrlC(process.Pid); err != nil {
+					return fmt.Errorf("executor shutdown error: %v", err)
 				}
 			}
 		}
-		if err := proc.Signal(syscall.SIGKILL); err != nil {
-			return err
+		if err := sendCtrlC(proc.Pid); err != nil {
+			return fmt.Errorf("executor shutdown error: %v", err)
 		}
 	} else {
 		if err := sendCtrlBreak(proc.Pid); err != nil {
