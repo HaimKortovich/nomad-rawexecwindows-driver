@@ -53,8 +53,8 @@ func (e *UniversalExecutor) shutdownProcess(s os.Signal, proc *os.Process) error
 		s = os.Kill
 	}
 	if s.String() == os.Interrupt.String() {
-		if err := sendCtrlC(proc.Pid); err != nil {
-			return fmt.Errorf("executor shutdown error: %v", err)
+		if err := proc.Signal(syscall.SIGKILL); err != nil {
+			return err
 		}
 	} else {
 		if err := sendCtrlBreak(proc.Pid); err != nil {
