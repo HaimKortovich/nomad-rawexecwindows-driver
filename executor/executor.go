@@ -585,6 +585,8 @@ func (e *UniversalExecutor) Shutdown(signal string, grace time.Duration) error {
 			return err
 		}
 
+		e.logger.Info("PROCESS ID: ", proc.Pid)
+
 		if err := e.shutdownProcess(sig, proc); err != nil {
 			e.logger.Warn("failed to shutdown process", "pid", proc.Pid, "error", err)
 			return err
