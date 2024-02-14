@@ -30,7 +30,6 @@ jobs:
       - name: get product version
         id: get-product-version
         run: |
-          make version
           echo "::set-output name=product-version::0.0.0"
 
   generate-metadata-file:
