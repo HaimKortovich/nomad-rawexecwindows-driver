@@ -6,9 +6,10 @@
 package executor
 
 import (
+	"bytes"
 	"fmt"
-	"github.com/mitchellh/go-ps"
 	"golang.org/x/sys/windows"
+	"net/http"
 	"os"
 	"syscall"
 )
@@ -53,23 +54,8 @@ func (e *UniversalExecutor) shutdownProcess(s os.Signal, proc *os.Process) error
 		s = os.Kill
 	}
 	if s.String() == os.Interrupt.String() {
-		processes, err := ps.Processes()
-		if err != nil {
+		if err := sendShutdown(); err != nil {
 			return err
-		}
-		for _, process := range processes {
-			if process.PPid() == proc.Pid {
-				process, err := os.FindProcess(process.Pid())
-				if err != nil {
-					return fmt.Errorf("error finding process: %v", err)
-				}
-				if err := sendCtrlBreak(process.Pid); err != nil {
-					return fmt.Errorf("executor shutdown error: %v", err)
-				}
-			}
-		}
-		if err := sendCtrlBreak(proc.Pid); err != nil {
-			return fmt.Errorf("executor shutdown error: %v", err)
 		}
 	} else {
 		if err := sendCtrlBreak(proc.Pid); err != nil {
@@ -77,6 +63,25 @@ func (e *UniversalExecutor) shutdownProcess(s os.Signal, proc *os.Process) error
 		}
 	}
 
+	return nil
+}
+
+func sendShutdown() error {
+	url := "http://localhost:8000/shutdown"
+	method := "POST"
+	payload := []byte{}
+	client := &http.Client{}
+	req, _ := http.NewRequest(method, url, bytes.NewBuffer(payload))
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("Error making request:", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("Error returned non 200 code:", err)
+	}
 	return nil
 }
 
