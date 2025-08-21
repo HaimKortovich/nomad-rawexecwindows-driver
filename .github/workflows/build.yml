@@ -3,6 +3,8 @@ name: build
 on:
   push:
   workflow_dispatch:
+  release:
+    types: [created]
 
 env:
   PKG_NAME: "nomad-rawexecwindows-driver"
@@ -87,3 +89,28 @@ jobs:
         with:
           name: ${{ env.PKG_NAME }}_${{ needs.get-product-version.outputs.product-version }}_${{ matrix.goos }}_${{ matrix.goarch }}.zip
           path: ${{ env.PKG_NAME }}_${{ needs.get-product-version.outputs.product-version }}_${{ matrix.goos }}_${{ matrix.goarch }}.zip
+
+  upload-release-assets:
+    needs:
+      - build-windows
+      - get-product-version
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: List downloaded artifacts
+        run: ls -la artifacts/
+
+      - name: Upload release assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: artifacts/${{ env.PKG_NAME }}_${{ needs.get-product-version.outputs.product-version }}_windows_amd64.zip
+          asset_name: ${{ env.PKG_NAME }}_${{ needs.get-product-version.outputs.product-version }}_windows_amd64.zip
+          asset_content_type: application/zip
